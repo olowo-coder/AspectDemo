@@ -1,6 +1,7 @@
 package com.example.aspecttest.controller;
 
 
+import com.example.aspecttest.model.Employee;
 import com.example.aspecttest.service.TrialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,8 @@ public class DemoController {
 
     @GetMapping
     public ResponseEntity<?> tested(){
-        trialService.doPayment();
+//        trialService.doPayment();
+        trialService.serve("Based", new Employee("Bob", "test@bob.com"));
         return ResponseEntity.ok(Map.of("test", "working"));
     }
 }
