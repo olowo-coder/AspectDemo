@@ -1,13 +1,12 @@
 package com.example.aspecttest.controller;
 
 
+import com.example.aspecttest.dto.RequestDTO;
 import com.example.aspecttest.model.Employee;
 import com.example.aspecttest.service.TrialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -27,5 +26,10 @@ public class DemoController {
 //        trialService.doPayment();
         trialService.serve("Based", new Employee("Bob", "test@bob.com"));
         return ResponseEntity.ok(Map.of("test", "working"));
+    }
+
+    @PostMapping("/send")
+    public ResponseEntity<?> posting(@RequestBody RequestDTO requestDTO){
+        return ResponseEntity.ok(Map.of("test", "working", "ref", trialService.doTransaction(requestDTO)));
     }
 }
