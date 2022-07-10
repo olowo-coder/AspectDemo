@@ -2,6 +2,7 @@ package com.example.aspecttest.config;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Enumeration;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -10,8 +11,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
@@ -36,7 +39,7 @@ public class LoggingFilter extends OncePerRequestFilter {
                 response.getCharacterEncoding());
 
         LOGGER.info(
-                "FINISHED PROCESSING : METHOD={}; REQUESTURI={}; REQUEST PAYLOAD={}; RESPONSE CODE={}; RESPONSE={}; TIM TAKEN={}",
+                "FINISHED PROCESSING :\nMETHOD={};\nREQUESTURI={};\nREQUEST PAYLOAD={};\nRESPONSE CODE={};\nRESPONSE={};\nTIME TAKEN={}ms",
                 request.getMethod(), request.getRequestURI(), requestBody, response.getStatus(), responseBody,
                 timeTaken);
         responseWrapper.copyBodyToResponse();
