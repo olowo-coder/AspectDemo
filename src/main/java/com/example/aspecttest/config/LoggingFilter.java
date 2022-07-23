@@ -2,15 +2,19 @@ package com.example.aspecttest.config;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.example.aspecttest.exception.UnknownClientException;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,22 +44,33 @@ public class LoggingFilter extends OncePerRequestFilter {
         System.out.println("ipAddress -> " + ipAddress);
 
         if(!allowedClient.contains(xClient)){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Invalid Client header");
+            throw new UnknownClientException("Invalid Client header");
         }
+
+//        System.out.println("Extract: " + IOUtils.toString(request.getReader()));
+
         long startTime = System.currentTimeMillis();
         filterChain.doFilter(requestWrapper, responseWrapper);
         long timeTaken = System.currentTimeMillis() - startTime;
 
         String requestBody = getStringValue(requestWrapper.getContentAsByteArray(),
                 request.getCharacterEncoding());
+
+
         String responseBody = getStringValue(responseWrapper.getContentAsByteArray(),
                 response.getCharacterEncoding());
 
+        String req = new String(requestWrapper.getContentAsByteArray());
+
+
+
         LOGGER.info(
                 "FINISHED PROCESSING :\nMETHOD={};\nREQUESTURI={};\nREQUEST PAYLOAD={};\nRESPONSE CODE={};\nRESPONSE={};\nTIME TAKEN={}ms",
-                request.getMethod(), request.getRequestURI(), requestBody, response.getStatus(),  responseBody,
+                request.getMethod(), request.getRequestURI(), requestBody.replaceAll(" ", ""), response.getStatus(),  responseBody,
                 timeTaken);
         responseWrapper.copyBodyToResponse();
+
+
     }
 
     private String getStringValue(byte[] contentAsByteArray, String characterEncoding) {
@@ -65,6 +80,17 @@ public class LoggingFilter extends OncePerRequestFilter {
             e.printStackTrace();
         }
         return "";
+    }
+
+    private String extractPostBody(HttpServletRequest request){
+        Scanner s = null;
+        try{
+            s = new Scanner(request.getInputStream(), StandardCharsets.UTF_8).useDelimiter("\\A");
+        }catch (IOException ex){
+            ex.printStackTrace();
+        }
+        assert s != null;
+        return s.hasNext() ? s.next() : "";
     }
 
 }

@@ -3,6 +3,7 @@ package com.example.aspecttest.service;
 import com.example.aspecttest.dto.RequestDTO;
 import com.example.aspecttest.interfaces.LogExecutionTime;
 import com.example.aspecttest.model.Employee;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
